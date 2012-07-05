@@ -32,7 +32,7 @@
     module('basilisk.Definitions');
     test('makeConstructor should return a function.', function () {
        var eg, Cons = b.definitions.makeConstructor({
-            x: {},
+            x: {}
        });
 
        ok(_.isFunction(Cons), 'Constructor should be a function.');
@@ -178,7 +178,7 @@
 
         test('property settings should result in error.', function () {
             var Cons = b.definitions.makeConstructor({
-                x: {},
+                x: {}
             }), eg;
 
             eg = new Cons({ x: 13 });
@@ -191,13 +191,14 @@
 
         test('Even if a property is mangled, "with" should create a clean copy.', function () {
             var Cons = b.definitions.makeConstructor({
-                y: {},
+                x: {},
+                y: {}
             }), eg;
 
-            eg = new Cons({ y: 10 });
+            eg = new Cons({ x: 5, y: 10 });
             eg.y = 11;
             equal(11, eg.y, "in non-strict mode, changing properties does (sadly) work");
-            eg = eg.with_({});
+            eg = eg.with_({x: 6});
             equal(10, eg.y, 'but with_ will restore the original value.');
         });
     }

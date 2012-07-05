@@ -33,7 +33,7 @@
 
     var log = function () { };
     if (window && window.console && window.console.log) {
-        log = function () { window.console.log.apply(window.console, arguments); }
+        log = function () { window.console.log.apply(window.console, arguments); };
     }
 
 
@@ -89,7 +89,7 @@
             constructor =  function (sample) {
                 var self = this,
                     sample = sample || {},
-                    origValues = _.extend({}, sample);
+                    origValues = {}; // we hold the old object against this.
 
                 // microoptimisation 
                 if (sample instanceof constructor) { 
@@ -106,8 +106,45 @@
                 _.each(propList, function (value, key) {
                     var valueFn = value.filter || _.identity;
                     self[key] = valueFn(sample[key] || undefined);
+                    origValues[key] = self[key];
                 });
-            };
+
+                // override with_: the actual object may have been mutated, so we
+                // need to use a fallback.
+                self.with_ = function (adjustProperties) {
+                    var sample = {},
+                        changed = false;
+                    _.each(propList, function (value, key) {
+                        var valueFn = value.filter || undefined,
+                            strictEqual = value.strictEqual || undefined,
+                            rawValue, 
+                            value;
+
+                        if (Object.hasOwnProperty.call(adjustProperties, key)) {
+                            rawValue = adjustProperties[key];
+
+                            if (valueFn) { 
+                                value = valueFn(rawValue); 
+                            } else { 
+                                value = rawValue; 
+                            }
+
+                            if (strictEqual) {
+                                changed = changed || !strictEqual(value, origValues[key]);
+                            } else {
+                                changed = changed || (value !== origValues[key]);
+                            }
+
+                            sample[key] = value;
+                        } else {
+                            sample[key] = origValues[key];
+                        } 
+                    });
+
+                    if (!changed) { return self; }
+                    return new constructor(sample);
+                };
+            }
         } else {
             // create a fully immutable object chain.
             constructor = function (sample) {
@@ -181,7 +218,7 @@
         // TODO: handle definitions for complex objects.
         _.each(propList, function (value, key) {
             var withLabel = key;
-            withLabel = withLabel[0].toUpperCase() + withLabel.slice(1, withLabel.length);
+            withLabel = withLabel.charAt(0).toUpperCase() + withLabel.slice(1, withLabel.length);
             withLabel = 'with' + withLabel;
             
             constructor.prototype[withLabel] = function (value) {
@@ -627,7 +664,7 @@
                 watchers = watchers.filter(function (compare) { return compare !== watcher; });
             },
 
-            watchers: function () { return watchers },
+            watchers: function () { return watchers }
         });
 
         // shorter alias for cas.
