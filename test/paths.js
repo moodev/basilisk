@@ -8,7 +8,8 @@
     "use strict";
     module('basilisk.Path');
 
-    var b = basilisk, Path = b.utils.Path;
+    var b = basilisk, 
+        Path = b.utils.Path;
 
     test('Basic path descent', function () {
         var TreeNode = b.struct({
@@ -66,7 +67,7 @@
                     value: 'l.r'
                 }),
                 left: new TreeNode({
-                    value: 'l.l',
+                    value: 'l.l'
                 })
             })
         });
@@ -92,7 +93,7 @@
                     value: 'l.r'
                 }),
                 left: new TreeNode({
-                    value: 'l.l',
+                    value: 'l.l'
                 })
             })
         });
