@@ -104,8 +104,12 @@
                 // in this scenario: we will have to rely on failure modes 
                 // being caught in modern browsers.
                 _.each(propList, function (value, key) {
-                    var valueFn = value.filter || _.identity;
-                    self[key] = valueFn(sample[key] || undefined);
+                    var valueFn = value.filter || _.identity,
+                        val;
+                    if (_.has(sample, key)) {
+                        val = sample[key];
+                    }
+                    self[key] = valueFn(val);
                     origValues[key] = self[key];
                 });
 
@@ -160,9 +164,13 @@
                 }
 
                 _.each(propList, function (value, key) {
-                    var valueFn = value.filter || _.identity;
+                    var valueFn = value.filter || _.identity,
+                        val;
+                    if (_.has(sample, key)) {
+                        val = sample[key];
+                    }
                     Object.defineProperty(self, key, {
-                        value: valueFn(sample[key] || undefined),
+                        value: valueFn(val),
                         writable: false,
                         enumerable: true
                     });
