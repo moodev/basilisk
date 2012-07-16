@@ -491,7 +491,7 @@
         },
 
         length: oncePerInstance(function () {
-            if (this.head === undefined) {
+            if (!this.head) {
                 return 0;
             } else {
                 return this.head.length();
