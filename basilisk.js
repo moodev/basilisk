@@ -466,7 +466,7 @@
     });
 
     b.collections.ForwardListNode.prototype.length = oncePerInstance(function () {
-        if (this.rest === undefined) {
+        if (!this.rest) {
             return 1;
         } else {
             return 1 + this.rest.length();
